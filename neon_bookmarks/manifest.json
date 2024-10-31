@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Neon Bookmarks",
+  "version": "1.0.0",
+  "description": "Quickly search your bookmarks intelligently and remove dead links",
+  "permissions": [
+    "bookmarks",
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "48": "logo_48x48.png",
+    "128": "logo_128x128.png"
+  }
+}

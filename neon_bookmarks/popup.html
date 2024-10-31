@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Beautiful Bookmarks Grid</title>
+  <meta name="viewport">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="search-container">
+        <div class="search-wrapper">
+          <input type="text" id="searchInput" placeholder="Search bookmarks...">
+          <img src="search_128x128.png" id="helpButton" class="help-button" alt="Help" title="Help">
+        </div>
+      </div>
+    </header>
+    
+    <main class="main-content">
+      <!-- <h2>Related</h2>
+      <p id="description"></p>
+      <div id="bookmarksRelated" class="bookmarks-grid"> -->
+        <!-- Bookmarks will be inserted here -->
+      <!-- </div>
+      <h2>All bookmarks</h2> -->
+      <div id="bookmarksGrid" class="bookmarks-grid">
+        <!-- Bookmarks will be inserted here -->
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="bookmark-count">
+        <span id="bookmarkCount">0</span> bookmarks
+      </div>
+      <div class="app-logo">
+        <img src="logo_128x128.png" alt="App Logo">
+        <span>Neon Bookmarks</span>
+      </div>
+    </footer>
+  </div>
+  <script src="popup.js" type="module"></script>
+</body>
+</html>
