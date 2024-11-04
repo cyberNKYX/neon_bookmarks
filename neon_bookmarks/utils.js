@@ -10,11 +10,18 @@ export function getBaseUrl(url) {
 
 export function debounce(func, delay) {
     let timeoutId;
-    return function (...args) {
+    return async function (...args) {
         clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-            func.apply(this, args);
-        }, delay);
+        return new Promise((resolve) => {
+            timeoutId = setTimeout(async () => {
+                try {
+                    const result = await func.apply(this, args);
+                    resolve(result);
+                } catch (error) {
+                    resolve(Promise.reject(error));
+                }
+            }, delay);
+        });
     };
 }
 

@@ -11,7 +11,7 @@ setInterval(async () => {
     await unlock();
     const bookmarks = await fetchBookmarks();
     await fetchAllDescriptions(bookmarks, true);
-}, 1000 * 60 * 60 * 24); // 每天执行一次
+}, 1000 * 60 * 60 * 24 * 7); // 每周执行一次
 
 // 监听书签创建
 chrome.bookmarks.onCreated.addListener(async (id, bookmark) => {
@@ -40,7 +40,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
         console.log('扩展程序更新，重新fetch descriptions');
         await unlock();
         const bookmarks = await fetchBookmarks();
-        await fetchAllDescriptions(bookmarks, false);
+        await fetchAllDescriptions(bookmarks, true);
         console.log(bookmarks);
     }
     // 在这里执行你的任务

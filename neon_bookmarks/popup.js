@@ -1,16 +1,19 @@
-import { fetchBookmarks, fetchTabDescription, fetchAllDescriptions } from "./fetch_data.js";
+import { fetchBookmarks, fetchTabDescription, fetchAllDescriptions, getScanningCache } from "./fetch_data.js";
 import { debounce } from "./utils.js";
 
 var allBookmarks = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
   // Initialize bookmarks
+  setupMessageListener();
   allBookmarks = await fetchBookmarks();
   showLoading();
-  displayBookmarks(allBookmarks);
+  await displayBookmarks(allBookmarks);
   setupSearchInput();
   setupWindowResizeEventListener();
   setupHelpButton();
+  setupScanningTooltip();
+
   // const desc = await fetchTabDescription();
   // displayTabDescription(desc);
 
@@ -21,8 +24,29 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   console.log(`All descriptions fetched in ${duration} ms`);
   console.log(allBookmarks);
-  displayBookmarks(allBookmarks);
+  await displayBookmarks(allBookmarks);
 });
+
+
+function setScanningProgress(progress) {
+  const progressElement = document.getElementById('fetchProgress');
+  if (progressElement) {
+    if (progress < 100) {
+      progressElement.textContent = ` Scanning (${progress}%)`;
+    } else {
+      progressElement.textContent = 'Scanning complete';
+    }
+  } else {
+    console.error("Progress element does not exist");
+  }
+}
+function setupMessageListener() {
+  chrome.runtime.onMessage.addListener((message) => {
+    if (message.type === 'fetchProgress') {
+      setScanningProgress(message.progress);
+    }
+  });
+}
 
 function setupHelpButton() {
   const helpButton = document.getElementById('helpButton');
@@ -51,6 +75,39 @@ function setupHelpButton() {
     if (!tooltip.contains(e.target) && !helpButton.contains(e.target)) {
       tooltip.classList.remove('show');
     }
+  });
+}
+
+async function setupScanningTooltip() {
+  const progressWrapper = document.querySelector('.fetch-progress');
+  const tooltip = document.createElement('div');
+  tooltip.className = 'tooltip';
+
+  progressWrapper.appendChild(tooltip);
+
+  progressWrapper.addEventListener('mouseover', async (e) => {
+    console.log("Show progress tooltip");
+    e.stopPropagation();
+    const complete = await getScanningCache();
+    if (complete) {
+      tooltip.innerHTML = `
+        <p>Scanning is complete!</p>
+        <p>All broken links are found.</p>
+      `;
+    } else {
+      tooltip.innerHTML = `
+        <p>While scanning your bookmarks,</p>
+        <p>you can continue using the extension normally.</p>
+        <p>Broken links will update automatically afterwards.</p>
+      `;
+    }
+    tooltip.classList.toggle('show');
+  });
+
+  progressWrapper.addEventListener('mouseout', (e) => {
+    console.log("Hide progress tooltip");
+    e.stopPropagation();
+    tooltip.classList.remove('show');
   });
 }
 
@@ -107,7 +164,7 @@ function createBookmarkCard(bookmark) {
   // Add second category badge
   const typeBadge = document.createElement('div');
   typeBadge.className = 'category-badge badge-dead';
-  if (bookmark.desc == "Failed") {
+  if (bookmark.desc == "dead") {
     typeBadge.textContent = "dead";
   } else {
     typeBadge.hidden = true;
@@ -137,7 +194,7 @@ function createBookmarkCard(bookmark) {
   card.appendChild(badgesContainer);
   card.appendChild(deleteBtn);
 
-  content.addEventListener('click', () => {
+  card.addEventListener('click', () => {
     if (window.getSelection().toString() === '') {
       chrome.tabs.create({ url: bookmark.url });
     }
@@ -190,7 +247,7 @@ async function deleteBookmark(bookmarkId, card) {
   }
 }
 
-function displayBookmarks(bookmarks) {
+async function displayBookmarks(bookmarks) {
   if (bookmarks.length === 0) {
     showEmpty();
     return;
@@ -208,6 +265,12 @@ function displayBookmarks(bookmarks) {
 
   const visibleBookmarks = bookmarks.filter(b => b.url).length;
   document.getElementById('bookmarkCount').textContent = visibleBookmarks;
+
+  const complete = await getScanningCache();
+  console.log("scanning is complete, show progress");
+  if (complete) {
+    setScanningProgress(100);
+  }
 }
 
 function displayTabDescription(description) {
@@ -215,9 +278,9 @@ function displayTabDescription(description) {
 }
 
 function filterBookmarks(bookmarks, searchTerm) {
-  var filtered;
+  var filtered = [];
   if (searchTerm.startsWith(":dead")) {
-    filtered = bookmarks.filter(bookmark => bookmark.desc == "Failed");
+    filtered = bookmarks.filter(bookmark => bookmark.desc == "dead");
   }
   else if (searchTerm.startsWith(":site")) {
     filtered = bookmarks.filter(bookmark => bookmark.siteOrPage.toLowerCase() == "site");
@@ -230,21 +293,22 @@ function filterBookmarks(bookmarks, searchTerm) {
       const searchLower = searchTerm.toLowerCase();
       var result = bookmark.title.toLowerCase().includes(searchLower) ||
         bookmark.url.toLowerCase().includes(searchLower);
-      if (bookmark.desc && bookmark.desc !== 'Failed' && bookmark.desc !== 'No description') {
+      if (bookmark.desc && bookmark.desc !== 'dead' && bookmark.desc !== 'No description') {
         result = result || bookmark.desc.toLowerCase().includes(searchLower);
       }
       return result;
     });
   }
-  displayBookmarks(filtered);
+  return filtered;
 }
 
 function setupSearchInput(delay = 300) {
   const searchInput = document.getElementById('searchInput');
   const debouncedFilter = debounce(filterBookmarks, delay);
 
-  searchInput.addEventListener('input', (e) => {
-    debouncedFilter(allBookmarks, e.target.value);
+  searchInput.addEventListener('input', async (e) => {
+    const filtered = await debouncedFilter(allBookmarks, e.target.value);
+    await displayBookmarks(filtered);
   });
 }
 

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Neon Bookmarks",
-  "version": "1.0.0",
-  "description": "Quickly search your bookmarks intelligently and remove dead links",
+  "version": "1.1.0",
+  "description": "Search bookmarks, scan and remove dead links",
   "permissions": [
     "bookmarks",
     "activeTab",
@@ -10,7 +10,7 @@
     "storage"
   ],
   "host_permissions": [
-    "<all_urls>"
+    "https://dub.co/tools/metatags"
   ],
   "background": {
     "service_worker": "background.js",

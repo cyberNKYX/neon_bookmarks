@@ -55,23 +55,37 @@ function parseSiteOrPage(url) {
 export async function fetchAllDescriptions(bookmarks, force = false) {
     if (await isLocked()) {
         console.log("别的地方在fetch description 中，跳过");
+        const complete = await getScanningCache();
+        console.log("scanning is complete");
         return;
     }
 
     await lock();
+
+    resetScanningCache();
+
     const filteredBookmarks = bookmarks.filter(bookmark => bookmark.url);
 
-    for (const bookmark of filteredBookmarks) {
-        const siteOrPage = parseSiteOrPage(bookmark.url);
-        bookmark.siteOrPage = siteOrPage;
+    let max_count = 1000;
+    for (let i = 0; i < Math.min(max_count, filteredBookmarks.length); i++) {
+        const bookmark = filteredBookmarks[i];
         try {
             const desc = await fetchDescription(bookmark.url, force = force);
             bookmark.desc = desc;
         } catch (error) {
-            bookmark.desc = "Failed";
+            bookmark.desc = "dead";
             console.error(`Failed to fetch description for ${bookmark.url}:`, error);
         }
+
+        const progress = Math.round((i + 1) / Math.min(max_count, filteredBookmarks.length) * 100);
+        try {
+            await chrome.runtime.sendMessage({ type: 'fetchProgress', progress });
+        } catch (error) {
+            console.log('No listeners for progress updates');
+        }
     }
+
+    setScanningCache();
 
     await unlock();
 }
@@ -90,11 +104,11 @@ export async function fetchDescription(url, force = false) {
 
 async function fetchDescriptionFromCache(url) {
     return new Promise((resolve) => {
-        chrome.storage.local.get(url, (result) => {
+        chrome.storage.sync.get(url, (result) => {
             if (result[url]) {
                 const { description, timestamp } = result[url];
                 const now = Date.now();
-                const expirationTime = 7 * 24 * 60 * 60 * 1000; // 7 days
+                const expirationTime = 7 * 24 * 60 * 60 * 1000; // 7 days + a random number between 0-1 minute
                 if (now - timestamp < expirationTime) {
                     resolve(description);
                     return;
@@ -106,26 +120,21 @@ async function fetchDescriptionFromCache(url) {
 }
 
 
-
-function extractMetaDescription(html) {
-    const metaDescriptionRegex = /<meta\s+name=["']description["']\s+content=["']([^"']+)["']/i;
-    const match = html.match(metaDescriptionRegex);
-    return match ? match[1] : "No description";
-}
-
-
 async function fetchDescriptionFromNetwork(url) {
     try {
         const base_url = getBaseUrl(url);
-        const response = await fetch(base_url);
-        const html = await response.text();
-        const description = extractMetaDescription(html);
+        const response = await fetch("https://api.dub.co/metatags?url=" + base_url);
+        const result = await response.json();
+        var description = result.description;
+        if (description == "No description" && result.title == base_url) {
+            description = "dead";
+        }
         await setDescriptionCache(url, description);
         return description;
     } catch (err) {
-        await setDescriptionCache(url, "Failed");
+        await setDescriptionCache(url, "dead");
         console.error("Error fetching description:", err);
-        return "Failed";
+        return "dead";
     }
 }
 
@@ -133,7 +142,34 @@ async function fetchDescriptionFromNetwork(url) {
 async function setDescriptionCache(url, description) {
     const timestamp = Date.now();
     return new Promise((resolve) => {
-        chrome.storage.local.set({ [url]: { description, timestamp } }, () => {
+        chrome.storage.sync.set({ [url]: { description, timestamp } }, () => {
+            resolve();
+        });
+    });
+}
+
+async function setScanningCache() {
+    return new Promise((resolve) => {
+        chrome.storage.sync.set({ "scanning_complete": true }, () => {
+            resolve();
+        });
+    });
+}
+
+export async function getScanningCache() {
+    return new Promise((resolve) => {
+        chrome.storage.sync.get("scanning_complete", (result) => {
+            if (result["scanning_complete"]) {
+                return resolve(true);
+            }
+            resolve(false); // 如果没有缓存或已过期，返回 null
+        });
+    });
+}
+
+async function resetScanningCache() {
+    return new Promise((resolve) => {
+        chrome.storage.sync.remove("scanning_complete", () => {
             resolve();
         });
     });
@@ -149,6 +185,8 @@ function flattenBookmarks(bookmarkItems) {
         const bookmark = stack.pop();
 
         if (bookmark.url) {
+            const siteOrPage = parseSiteOrPage(bookmark.url);
+            bookmark.siteOrPage = siteOrPage;
             allBookmarks.push(bookmark);
         }
 

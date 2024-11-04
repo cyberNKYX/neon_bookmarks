@@ -104,6 +104,18 @@ body {
   display: none;
 }
 
+.fetch-progress .tooltip {
+  font-size: 14px;
+  position: fixed;
+  width: 580px;
+  top: 10px;
+  right: 10px;
+  text-align: left;
+  color: white;
+  font-weight: bold;
+  background-color: orangered;
+}
+
 .tooltip.show {
   display: block;
 }
@@ -321,4 +333,8 @@ body {
   text-align: center;
   padding: var(--spacing-unit);
   color: #666;
+}
+
+.tooltip {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
