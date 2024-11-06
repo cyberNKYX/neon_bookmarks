@@ -36,11 +36,19 @@ function setupMessageListener() {
       console.log(progress);
       if (progress >= 0) {
         displayScanningProgress(progress, timestamp);
-        const allBookmarks = await fetchBookmarks();
+        const searchInput = document.getElementById('searchInput');
+        let allBookmarks = await fetchBookmarks();
+        if (searchInput.value.length > 0) {
+          allBookmarks = await filterBookmarks(allBookmarks, searchInput.value);
+        }
         await displayBookmarks(allBookmarks);
       }
     } else if (message.type === 'SCANNING_UPON_CREATION' || message.type === 'SCANNING_UPON_CHANGE') {
-      const allBookmarks = await fetchBookmarks();
+      const searchInput = document.getElementById('searchInput');
+      let allBookmarks = await fetchBookmarks();
+      if (searchInput.value.length > 0) {
+        allBookmarks = await filterBookmarks(allBookmarks, searchInput.value);
+      }
       await displayBookmarks(allBookmarks);
     }
   });
