@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Neon Bookmarks",
-  "version": "1.1.0",
+  "name": "Neon Bookmarks (Beta)",
+  "version": "1.2.1",
   "description": "Search bookmarks, scan and remove dead links",
   "permissions": [
     "bookmarks",
