@@ -34,15 +34,17 @@ export async function isLocked() {
 }
 
 export async function lock() {
-    console.log("Fetching...")
+    console.log("Start new scanning...")
     return new Promise((resolve) => {
         chrome.storage.local.set({ fetchLock: true }, resolve);
     });
 }
 
 export async function unlock() {
-    console.log("Fetching end...")
+    console.log("Scanning end...")
     return new Promise((resolve) => {
         chrome.storage.local.remove('fetchLock', resolve);
     });
 }
+
+export const timer = ms => new Promise(res => setTimeout(res, ms));

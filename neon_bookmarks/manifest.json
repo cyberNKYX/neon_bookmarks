@@ -10,7 +10,8 @@
     "storage"
   ],
   "host_permissions": [
-    "https://dub.co/tools/metatags"
+    "https://dub.co/tools/metatags",
+    "<all_urls>"
   ],
   "background": {
     "service_worker": "background.js",
