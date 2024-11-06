@@ -80,8 +80,8 @@ async function checkDeadLinkFromCache(url, check_expire = true) {
             if (result[url]) {
                 const { status, timestamp } = result[url];
                 const now = Date.now();
-                // const expirationTime = 7 * 24 * 60 * 60 * 1000;
-                const expirationTime = 1;
+                const expirationTime = 7 * 24 * 60 * 60 * 1000;
+                // const expirationTime = 1;
                 if (now - timestamp < expirationTime || !check_expire) {
                     resolve(status);
                     return;
