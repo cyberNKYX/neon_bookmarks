@@ -5,8 +5,6 @@
   "description": "Search bookmarks, scan and remove dead links",
   "permissions": [
     "bookmarks",
-    "activeTab",
-    "scripting",
     "storage"
   ],
   "host_permissions": [
