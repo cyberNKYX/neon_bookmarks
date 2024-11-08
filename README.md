@@ -3,18 +3,29 @@
 <div align="center">
   <img src="neon_bookmarks/logo_128x128.png" alt="Neon Bookmarks Logo" width="128" height="128"/>
   
-  A sleek browser extension for managing your bookmarks with a neon aesthetic
+  <b>A sleek browser extension for managing your bookmarks with a neon aesthetic</b>
 </div>
 
-![Screenshot](dists/screenshot.png)
+![Screenshot](screenshot.png)
+
+<div align="center">
+<h2>Quick search</h2>
+</div>
+
+![search](quick_search.gif)
+
+<div align="center">
+<h2>Dead link detection</h2>
+</div>
+
+![dead](scan_deadlink.gif)
 
 ## Features
 
 - 🎯 Quick bookmark search functionality
 - 🎨 Stunning neon-themed interface
 - ⚡ Fast and responsive design
-- 🗑️ Easy bookmark deletion
-- 📱 Modern and clean UI
+- ❗ Dead link detection and easy deletion
 
 ## Development
 
@@ -28,4 +39,4 @@ The extension is built using vanilla JavaScript, CSS, and HTML, making it lightw
 
 ## License
 
-This project is fully copyrighted by [NKYX](https://github.com/NKYX)
+This project is fully copyrighted by [cyberNKYX](https://github.com/cyberNKYX).
