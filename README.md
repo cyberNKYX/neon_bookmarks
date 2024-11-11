@@ -40,3 +40,7 @@ The extension is built using vanilla JavaScript, CSS, and HTML, making it lightw
 ## License
 
 This project is fully copyrighted by [cyberNKYX](https://github.com/cyberNKYX).
+
+## Privacy Policy
+
+All your data will only be stored locally in your browser.
