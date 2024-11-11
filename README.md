@@ -1,5 +1,11 @@
 # Neon Bookmarks 🌟
 
+<div>
+  <a href="https://chromewebstore.google.com/detail/neon-bookmarks/boohehmkdinflfjbkcbakkfdpihfdpem" target="_blank"><img src="chrome1_800x181.png" alt="Available on Chrome Web Store" width="256"/></a>
+  
+  <b>A sleek browser extension for managing your bookmarks with a neon aesthetic</b>
+</div>
+
 <div align="center">
   <img src="neon_bookmarks/logo_128x128.png" alt="Neon Bookmarks Logo" width="128" height="128"/>
   
