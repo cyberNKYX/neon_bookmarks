@@ -1,30 +1,30 @@
 # Neon Bookmarks 🌟
 
 <div>
-  <a href="https://chromewebstore.google.com/detail/neon-bookmarks/boohehmkdinflfjbkcbakkfdpihfdpem" target="_blank"><img src="chrome1_800x181.png" alt="Available on Chrome Web Store" width="256"/></a>
+  <a href="https://chromewebstore.google.com/detail/neon-bookmarks/boohehmkdinflfjbkcbakkfdpihfdpem" target="_blank"><img src="https://cybernkyx-assets.surge.sh/chrome_800x181.png" alt="Available on Chrome Web Store" width="256"/></a>
   
   <b>A sleek browser extension for managing your bookmarks with a neon aesthetic</b>
 </div>
 
 <div align="center">
-  <img src="neon_bookmarks/logo_128x128.png" alt="Neon Bookmarks Logo" width="128" height="128"/>
+  <img src="https://cybernkyx-assets.surge.sh/neon_bookmarks/logo_128x128.png" alt="Neon Bookmarks Logo" width="128" height="128"/>
   
   <b>A sleek browser extension for managing your bookmarks with a neon aesthetic</b>
 </div>
 
-![Screenshot](screenshot.png)
+![Screenshot](https://cybernkyx-assets.surge.sh/neon_bookmarks/screenshot.png)
 
 <div align="center">
 <h2>Quick search</h2>
 </div>
 
-![search](quick_search.gif)
+![search](https://cybernkyx-assets.surge.sh/neon_bookmarks/quick_search.gif)
 
 <div align="center">
 <h2>Dead link detection</h2>
 </div>
 
-![dead](scan_deadlink.gif)
+![dead](https://cybernkyx-assets.surge.sh/neon_bookmarks/scan_deadlink.gif)
 
 ## Features
 
