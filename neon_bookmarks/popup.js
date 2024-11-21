@@ -208,19 +208,28 @@ function createBookmarkCard(bookmark) {
   });
 
   deleteBtn.addEventListener('click', async (e) => {
+    const searchInput = document.getElementById('searchInput');
     e.stopPropagation();
     await deleteBookmark(bookmark.id, card);
-    const allBookmarks = await fetchBookmarks();
+    let allBookmarks = await fetchBookmarks();
+    if (searchInput.value.length > 0) {
+      allBookmarks = await filterBookmarks(allBookmarks, searchInput.value);
+    }
     await displayBookmarks(allBookmarks);
   });
 
   card.setAttribute('tabindex', '0');
   card.addEventListener('keypress', async (e) => {
+
     if (e.key === 'Enter' || e.key === ' ') {
       if (e.target === deleteBtn) {
+        const searchInput = document.getElementById('searchInput');
         await deleteBookmark(bookmark.id, card);
         const allBookmarks = await fetchBookmarks();
-        await displayBookmarks(allBookmarks);
+        if (searchInput.value.length > 0) {
+          allBookmarks = await filterBookmarks(allBookmarks, searchInput.value);
+        }
+        await displayBookmarks(filtered);
       } else {
         chrome.tabs.create({ url: bookmark.url });
       }
